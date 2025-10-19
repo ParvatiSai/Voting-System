@@ -1,19 +1,18 @@
 package ui;
 
-import service.ResultService;
 import dao.CandidateDAO;
-import model.Candidate;
-import model.Admin;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import model.Admin;
+import model.Candidate;
+import service.ResultService;
 
 /**
  * Admin Dashboard UI - Enhanced with tabbed interface and comprehensive management.
