@@ -1,0 +1,107 @@
+# Compiled class files
+*.class
+out/
+target/
+build/
+
+# Log files
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files
+*.jar
+!mysql-connector-j-*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Virtual machine crash logs
+hs_err_pid*
+replay_pid*
+
+# IDE specific files
+## IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+## Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+## NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+## VS Code
+.vscode/
+*.code-workspace
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+
+# Database configuration (sensitive data)
+# Uncomment if you don't want to commit credentials
+# resources/db_config.properties
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~.nib
+*.orig
+
+# OS specific files
+## Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+## macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+## Linux
+*~
+
+# Compilation intermediates
+sources.txt
+sources_quoted.txt
+javac_errors.txt
+
+# Application specific
+# Add any project-specific files to ignore here
