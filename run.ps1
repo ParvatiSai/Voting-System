@@ -16,7 +16,9 @@ if (-not (Test-Path $mysqlConnector)) {
 
 # Compile
 Write-Host "Step 1: Compiling Java sources..." -ForegroundColor Green
-$files = Get-ChildItem -Path .\src\main\java -Recurse -Filter *.java | ForEach-Object { $_.FullName }
+$files = Get-ChildItem -Path .\src\main\java -Recurse -Filter *.java `
+    | Where-Object { $_.Name -ne 'tempCodeRunnerFile.java' } `
+    | ForEach-Object { $_.FullName }
 
 if (-not (Test-Path out)) {
     New-Item -ItemType Directory -Path out | Out-Null
@@ -25,7 +27,7 @@ if (-not (Test-Path out)) {
 & javac -d out $files
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "✓ Compilation successful!" -ForegroundColor Green
+    Write-Host "Compilation successful!" -ForegroundColor Green
     Write-Host ""
     
     # Run
@@ -40,6 +42,6 @@ if ($LASTEXITCODE -eq 0) {
         java -cp "out;resources" app.Main
     }
 } else {
-    Write-Host "✗ Compilation failed! Please check the errors above." -ForegroundColor Red
+    Write-Host "Compilation failed! Please check the errors above." -ForegroundColor Red
     exit 1
 }

@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import model.Candidate;
@@ -15,6 +17,7 @@ import service.VotingService;
  * Voting UI for students - Enhanced with better design and functionality.
  */
 public class VotingUI extends JFrame {
+    private static final Logger LOGGER = Logger.getLogger(VotingUI.class.getName());
     private JComboBox<Candidate> candidateCombo;
     private JButton voteButton;
     private JButton viewResultsButton;
@@ -184,7 +187,7 @@ public class VotingUI extends JFrame {
                 "Error loading candidates: " + e.getMessage(),
                 "Database Error",
                 JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error loading candidates", e);
             voteButton.setEnabled(false);
         }
     }
@@ -250,7 +253,7 @@ public class VotingUI extends JFrame {
                     "Error casting vote: " + ex.getMessage(),
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
-                ex.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Error casting vote", ex);
             } finally {
                 setCursor(Cursor.getDefaultCursor());
             }

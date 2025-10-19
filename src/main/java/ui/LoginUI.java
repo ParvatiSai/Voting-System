@@ -11,16 +11,19 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Login UI using Swing - Enhanced with better design and validation.
  */
 public class LoginUI extends JFrame {
+    private static final Logger LOGGER = Logger.getLogger(LoginUI.class.getName());
     private JTextField emailField;
     private JPasswordField passwordField;
     private JButton loginButton;
     private JButton registerButton;
-    private AuthService authService;
+    private final AuthService authService;
 
     public LoginUI() {
         authService = new AuthService();
@@ -87,30 +90,49 @@ public class LoginUI extends JFrame {
         gbc.weightx = 0.7;
         formPanel.add(passwordField, gbc);
 
-        // Buttons panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        buttonPanel.setBackground(Color.WHITE);
-
-        loginButton = new JButton("Login");
-        loginButton.setFont(new Font("Arial", Font.BOLD, 14));
-        loginButton.setPreferredSize(new Dimension(120, 35));
-        loginButton.setBackground(new Color(25, 118, 210));
-        loginButton.setForeground(Color.WHITE);
-        loginButton.setFocusPainted(false);
-        loginButton.addActionListener(new LoginAction());
-        buttonPanel.add(loginButton);
-
-        registerButton = new JButton("Register");
-        registerButton.setFont(new Font("Arial", Font.BOLD, 14));
-        registerButton.setPreferredSize(new Dimension(120, 35));
-        registerButton.setBackground(new Color(76, 175, 80));
-        registerButton.setForeground(Color.WHITE);
-        registerButton.setFocusPainted(false);
-        registerButton.addActionListener(new RegisterAction());
-        buttonPanel.add(registerButton);
-
-        gbc.gridx = 0;
+        // Show password toggle
+        JCheckBox showPassword = new JCheckBox("Show password");
+        showPassword.setFont(new Font("Arial", Font.PLAIN, 13));
+        showPassword.setForeground(new Color(50, 50, 50));
+        showPassword.setBackground(Color.WHITE);
+        showPassword.addActionListener((ActionEvent e) -> {
+            boolean selected = ((JCheckBox) e.getSource()).isSelected();
+            if (selected) {
+                passwordField.setEchoChar((char) 0);
+            } else {
+                // Reset to default echo char
+                passwordField.setEchoChar((new JPasswordField()).getEchoChar());
+            }
+        });
+        gbc.gridx = 1;
         gbc.gridy = 2;
+        gbc.weightx = 0.7;
+        formPanel.add(showPassword, gbc);
+
+    // Buttons panel
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+    buttonPanel.setBackground(Color.WHITE);
+
+    // Login button
+    loginButton = new JButton("Login");
+    loginButton.setFont(new Font("Arial", Font.BOLD, 14));
+    loginButton.setPreferredSize(new Dimension(120, 35));
+    loginButton.setEnabled(true);
+    styleButton(loginButton, new Color(25, 118, 210), Color.WHITE);
+    loginButton.addActionListener(new LoginAction());
+    buttonPanel.add(loginButton);
+
+    // Register button
+    registerButton = new JButton("Register");
+    registerButton.setFont(new Font("Arial", Font.BOLD, 14));
+    registerButton.setPreferredSize(new Dimension(120, 35));
+    registerButton.setEnabled(true);
+    styleButton(registerButton, new Color(56, 142, 60), Color.WHITE);
+    registerButton.addActionListener(new RegisterAction());
+    buttonPanel.add(registerButton);
+
+    gbc.gridx = 0;
+    gbc.gridy = 3;
         gbc.gridwidth = 2;
         formPanel.add(buttonPanel, gbc);
 
@@ -129,6 +151,14 @@ public class LoginUI extends JFrame {
         getRootPane().setDefaultButton(loginButton);
     }
 
+    private void styleButton(JButton button, Color bg, Color fg) {
+        button.setBackground(bg);
+        button.setForeground(fg);
+        button.setOpaque(true);
+        button.setContentAreaFilled(true);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createLineBorder(bg.darker(), 1, true));
+    }
     private class LoginAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -162,10 +192,10 @@ public class LoginUI extends JFrame {
                         "Login Successful",
                         JOptionPane.INFORMATION_MESSAGE);
 
-                    if (user instanceof Admin) {
-                        new AdminDashboard((Admin) user).setVisible(true);
-                    } else if (user instanceof Student) {
-                        new VotingUI((Student) user).setVisible(true);
+                    if (user instanceof Admin admin) {
+                        new AdminDashboard(admin).setVisible(true);
+                    } else if (user instanceof Student student) {
+                        new VotingUI(student).setVisible(true);
                     }
                     dispose();
                 } else {
@@ -175,12 +205,12 @@ public class LoginUI extends JFrame {
                         JOptionPane.ERROR_MESSAGE);
                     passwordField.setText("");
                 }
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(LoginUI.this,
-                    "Error connecting to database: " + ex.getMessage(),
-                    "Connection Error",
+                    "An unexpected error occurred: " + ex.getMessage(),
+                    "Error",
                     JOptionPane.ERROR_MESSAGE);
-                ex.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Login unexpected error", ex);
             } finally {
                 setCursor(Cursor.getDefaultCursor());
             }
@@ -252,7 +282,11 @@ public class LoginUI extends JFrame {
         submitButton.setBackground(new Color(76, 175, 80));
         submitButton.setForeground(Color.WHITE);
         submitButton.setPreferredSize(new Dimension(100, 30));
-        submitButton.addActionListener(ev -> {
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton source = (JButton) e.getSource();
+                source.setEnabled(false);
             String name = nameField.getText().trim();
             String email = regEmailField.getText().trim();
             String password = new String(regPasswordField.getPassword());
@@ -310,12 +344,15 @@ public class LoginUI extends JFrame {
                         "Registration Error",
                         JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(registerDialog,
-                    "Error during registration: " + ex.getMessage(),
+                    "An unexpected error occurred: " + ex.getMessage(),
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
-                ex.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Registration unexpected error", ex);
+            } finally {
+                source.setEnabled(true);
+            }
             }
         });
         buttonPanel.add(submitButton);
@@ -324,7 +361,11 @@ public class LoginUI extends JFrame {
         cancelButton.setBackground(new Color(244, 67, 54));
         cancelButton.setForeground(Color.WHITE);
         cancelButton.setPreferredSize(new Dimension(100, 30));
-        cancelButton.addActionListener(ev -> registerDialog.dispose());
+        cancelButton.addActionListener((ActionEvent e) -> {
+            if (e.getSource() == cancelButton) {
+                registerDialog.dispose();
+            }
+        });
         buttonPanel.add(cancelButton);
 
         gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;

@@ -1,6 +1,8 @@
 package service;
 
 import dao.UserDAO;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.User;
 import util.HashUtil;
 import util.ValidationUtil;
@@ -9,6 +11,7 @@ import util.ValidationUtil;
  * Service class for authentication logic.
  */
 public class AuthService {
+    private static final Logger LOGGER = Logger.getLogger(AuthService.class.getName());
     private UserDAO userDAO = new UserDAO();
 
     /**
@@ -22,7 +25,7 @@ public class AuthService {
             userDAO.createUser(user);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Registration failed", e);
             return false;
         }
     }
@@ -37,7 +40,7 @@ public class AuthService {
                 return user;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Login failed", e);
         }
         return null;
     }

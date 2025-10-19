@@ -1,6 +1,8 @@
 package service;
 
 import dao.VoteDAO;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Blockchain;
 import model.Vote;
 import util.HashUtil;
@@ -9,8 +11,9 @@ import util.HashUtil;
  * Service class for voting logic.
  */
 public class VotingService {
-    private VoteDAO voteDAO = new VoteDAO();
-    private Blockchain blockchain = new Blockchain();
+    private static final Logger LOGGER = Logger.getLogger(VotingService.class.getName());
+    private final VoteDAO voteDAO = new VoteDAO();
+    private final Blockchain blockchain = new Blockchain();
 
     /**
      * Casts a vote and adds to blockchain.
@@ -28,7 +31,7 @@ public class VotingService {
             voteDAO.createVote(vote);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error casting vote", e);
             return false;
         }
     }

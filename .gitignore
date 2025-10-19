@@ -71,8 +71,10 @@ gradlew
 gradlew.bat
 
 # Database configuration (sensitive data)
-# Uncomment if you don't want to commit credentials
-# resources/db_config.properties
+resources/db_config.properties
+
+# VS Code temp runner file
+**/tempCodeRunnerFile.java
 
 # Temporary files
 *.tmp
@@ -102,6 +104,9 @@ $RECYCLE.BIN/
 sources.txt
 sources_quoted.txt
 javac_errors.txt
+src/main/java/sources_rel.txt
+# Redundant but explicit class ignore in sources tree
+src/main/java/**/*.class
 
 # Application specific
 # Add any project-specific files to ignore here
